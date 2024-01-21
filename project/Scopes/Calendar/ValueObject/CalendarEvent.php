@@ -1,10 +1,11 @@
 <?php
 declare(strict_types=1);
-namespace Antarian\Calendar\Model;
+namespace Antarian\Scopes\Calendar\ValueObject;
 
+use Antarian\Core\ValueObject\ValueObject;
 use DateTimeImmutable;
 
-final readonly class CalendarEvent
+final readonly class CalendarEvent implements ValueObject
 {
     public function __construct(
         public string $title,

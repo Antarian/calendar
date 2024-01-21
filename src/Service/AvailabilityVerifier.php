@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
-namespace Antarian\Calendar\Service;
+namespace App\Service;
 
-use Antarian\Calendar\Repository\CalendarEventRepository;
+use App\Repository\CalendarEventRepository;
 use DateTimeImmutable;
 
 class AvailabilityVerifier

@@ -2,9 +2,9 @@
 declare(strict_types=1);
 namespace Tests\Unit\Service;
 
-use Antarian\Calendar\Model\CalendarEvent;
-use Antarian\Calendar\Repository\CalendarEventRepository;
-use Antarian\Calendar\Service\AvailabilityVerifier;
+use Antarian\Scopes\Calendar\ValueObject\CalendarEvent;
+use App\Repository\CalendarEventRepository;
+use App\Service\AvailabilityVerifier;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 

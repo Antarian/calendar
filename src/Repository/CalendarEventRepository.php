@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
-namespace Antarian\Calendar\Repository;
+namespace App\Repository;
 
-use Antarian\Calendar\Model\CalendarEvent;
+use Antarian\Scopes\Calendar\ValueObject\CalendarEvent;
 use DateTimeImmutable;
 
 class CalendarEventRepository

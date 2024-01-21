@@ -5,7 +5,8 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Antarian\\Calendar\\": "src/",
+            "App\\": "src/",
+            "Antarian\\": "project/",
             "Tests\\": "tests/"
         }
     },
@@ -17,7 +18,9 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "php": ">=8.2"
+        "php": ">=8.2",
+        "symfony/uid": "^7.0",
+        "symfony/validator": "^7.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^10.5"
