@@ -4,8 +4,6 @@ This is a project to demonstrate DDD architecture approach to create code with n
 In the [project](project) directory we have a `Scope/Calendar` namespace which has a common structure:
 `Command -> Command Handler -> Repository -> Entity (Model) -> Value Object(s)`
 
-Command and Command Handler are ready for adding the queue system, as they are the same style as in Symfony Messenger. Which I think is the best PHP library to handle event queues.
-
 There is also a simple App implementing domain commands created in [app](app) directory.
 
 ### Run the project
@@ -22,7 +20,7 @@ The calendar can contain thousands of events. It is not a good idea to load them
 #### Solution 1
 Used here, is the service interface [AvailabilityService](project/Scopes/Calendar/Service/AvailabilityService.php) to check for availability/conflicts in calendar. This interface is then implemented by App level service [AvailabilityVerifier](project/Scopes/Calendar/Service/AvailabilityService.php).
 
-This solution is preferred if we have conditions from other parts of the domain. E.g. there is a work-shift system and related calendar should not allow placing events outside the working hours.
+This solution is preferred if we have conditions from other parts of the domain. E.g. there is a work-shift system, and only some calendars should not allow placing events outside the working hours.
 
 #### Solution 2 (not used here)
 Is to create [CalendarRepository](project/Scopes/Calendar/Repository/CalendarRepository.php) method
@@ -39,10 +37,21 @@ In PHP, the DDD structure is best to use for writing operations. We can add `Que
 Using DDD Queries with almost any PHP framework is also bypassing what frameworks and ORMs are able to offer.
 
 ### Extending
+Command and Command Handler are ready for adding the queue system, as they are the same style as in [Symfony Messenger](https://symfony.com/doc/current/messenger.html). Which I think is the best PHP library to handle event queues. Validation of the commands is currently in the Controller, but this can be easily moved into message/command bus validation middleware [https://symfony.com/doc/current/messenger.html#middleware](https://symfony.com/doc/current/messenger.html#middleware).
+
 If we want to manage multiple calendars at once, belonging to the same person or multiple persons, the solution would be to add CalendarGroup aggregate. This aggregate can then still use solution 1 or 2 for the validation.
+
+If there are domain-specific rules to validate, this should be done in Entity(Model). 
+
+Implementing ES depends on requirements.
+- best for current example, entity will create events and react to those in own protected methods. This will ensure replay-able events fully handling the correct entity state. Events will be sent to the queue after successful `$repository->store(entity)`
+- if event queue is acting as a storage, e.g. DB is a service accepting specific events, repository->store may be ignored or used as event queue processor
 
 ### Tests
 ```php
 php ./vendor/bin/phpunit tests/
 php ./vendor/bin/phpunit project/Scopes/Calendar/Tests
 ```
+
+### License
+[MIT License](LICENSE.md)

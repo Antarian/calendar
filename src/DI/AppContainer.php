@@ -11,6 +11,8 @@ use DI\Definition\Source\MutableDefinitionSource;
 use DI\Proxy\ProxyFactory;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class AppContainer extends Container
 {
@@ -32,6 +34,12 @@ class AppContainer extends Container
             AvailabilityService::class => function (Container $c) {
                 return new AvailabilityVerifier($c->get(CalendarRepository::class));
             },
+            ValidatorInterface::class => function () {
+                $validatorBuilder = Validation::createValidatorBuilder();
+                $validatorBuilder->enableAttributeMapping();
+
+                return $validatorBuilder->getValidator();
+            }
         ];
     }
 }

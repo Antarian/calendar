@@ -9,6 +9,7 @@ use Antarian\Scopes\Calendar\Service\AvailabilityService;
 use App\Controller\EventsController;
 use App\DI\AppContainer;
 use Symfony\Component\Uid\UuidV6;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -16,7 +17,8 @@ $container = new AppContainer();
 
 $controller = new EventsController(
     $container->get(CalendarRepository::class),
-    $container->get(AvailabilityService::class)
+    $container->get(AvailabilityService::class),
+    $container->get(ValidatorInterface::class),
 );
 
 $controller->addCalendar('My Calendar', $calendarId = (new UuidV6())->toRfc4122());
