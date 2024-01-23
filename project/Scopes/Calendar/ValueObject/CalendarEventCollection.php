@@ -2,9 +2,9 @@
 declare(strict_types=1);
 namespace Antarian\Scopes\Calendar\ValueObject;
 
-use Antarian\Core\ValueObject\ValueObjectCollection;
+use Antarian\Core\Collection\Collection;
 
-final class CalendarEventCollection extends ValueObjectCollection
+final class CalendarEventCollection extends Collection
 {
     protected function getCollectionItemClass(): string
     {

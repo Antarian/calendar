@@ -2,29 +2,31 @@
 declare(strict_types=1);
 namespace Tests\Unit\Service;
 
+use Antarian\Scopes\Calendar\Model\CalendarId;
 use Antarian\Scopes\Calendar\ValueObject\CalendarEvent;
-use App\Repository\CalendarEventRepository;
+use App\Repository\CacheCalendarEventRepository;
 use App\Service\AvailabilityVerifier;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Uid\UuidV6;
 
 class AvailabilityVerifierTest extends TestCase
 {
     /**
-     * @dataProvider timeSlotAvailableProvider
+     * @dataProvider timeSlotAvailabilityProvider
      */
-    public function testTimeSlotIsAvailable(array $events, DateTimeImmutable $startDateTime, DateTimeImmutable $endDateTime, bool $expected): void
+    public function testTimeSlotAvailability(array $events, DateTimeImmutable $startDateTime, DateTimeImmutable $endDateTime, bool $expected): void
     {
-        $eventRepository = $this->createMock(CalendarEventRepository::class);
+        $eventRepository = $this->createMock(CacheCalendarEventRepository::class);
         $eventRepository->method('getEventsForDates')->willReturn($events);
 
         $availabilityVerifier = new AvailabilityVerifier($eventRepository);
-        $result = $availabilityVerifier->isSlotAvailable($startDateTime, $endDateTime);
+        $result = $availabilityVerifier->isSlotAvailable(new CalendarId((new UuidV6())->toRfc4122()), $startDateTime, $endDateTime);
 
         $this->assertSame($expected, $result);
     }
 
-    public static function timeSlotAvailableProvider(): array
+    public static function timeSlotAvailabilityProvider(): array
     {
         $events = [
             new CalendarEvent(
