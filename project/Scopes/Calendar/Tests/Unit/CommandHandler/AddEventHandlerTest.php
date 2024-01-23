@@ -2,24 +2,27 @@
 declare(strict_types=1);
 namespace Antarian\Scopes\Calendar\Tests\Unit\CommandHandler;
 
+use Antarian\Core\Tests\BaseTestCase;
 use Antarian\Scopes\Calendar\Command\AddEvent;
 use Antarian\Scopes\Calendar\CommandHandler\AddEventHandler;
 use Antarian\Scopes\Calendar\Model\Calendar;
 use Antarian\Scopes\Calendar\Model\CalendarId;
 use Antarian\Scopes\Calendar\Repository\CalendarRepository;
 use Antarian\Scopes\Calendar\Service\AvailabilityService;
-use Antarian\Scopes\Calendar\Tests\Unit\Model\CalendarIdTest;
-use PHPUnit\Framework\TestCase;
+use Symfony\Component\Uid\UuidV6;
 
-class AddEventHandlerTest extends TestCase
+class AddEventHandlerTest extends BaseTestCase
 {
     public AddEventHandler $addEventHandler;
+    public string $calendarId;
 
     protected function setUp(): void
     {
+        parent::setUp();
+
         $calendar = Calendar::create(
-            id: new CalendarId(CalendarIdTest::DUMMY_UUID_V6),
-            title: 'My Calendar'
+            id: new CalendarId($this->calendarId = UuidV6::generate()),
+            title: $this->faker->words(asText: true),
         );
 
         $repository = $this->createMock(CalendarRepository::class);
@@ -33,16 +36,16 @@ class AddEventHandlerTest extends TestCase
         $this->addEventHandler = new AddEventHandler($repository, $availabilityService);
     }
 
-    public function test_calendarHandlerProperlyInvoked()
+    public function testCalendarEventHandlerProperlyInvoked()
     {
         $addEvent = new AddEvent(
-            calendarId: CalendarIdTest::DUMMY_UUID_V6,
-            title: 'My Calendar',
+            calendarId: $this->calendarId,
+            title: $this->faker->words(asText: true),
             startDateTime: '2024-01-22T10:30:00+00:00',
             endDateTime: '2024-01-22T11:30:00+00:00',
         );
         $result = call_user_func($this->addEventHandler, $addEvent);
 
-        $this->assertEquals(new CalendarId($addEvent->calendarId), $result);
+        $this->assertEquals(new CalendarId($this->calendarId), $result);
     }
 }

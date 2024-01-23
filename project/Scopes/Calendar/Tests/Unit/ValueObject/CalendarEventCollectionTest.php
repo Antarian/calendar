@@ -3,21 +3,23 @@ declare(strict_types=1);
 namespace Antarian\Scopes\Calendar\Tests\Unit\ValueObject;
 
 use Antarian\Core\Collection\Collection;
+use Antarian\Core\Tests\BaseTestCase;
 use Antarian\Scopes\Calendar\ValueObject\CalendarEvent;
 use Antarian\Scopes\Calendar\ValueObject\CalendarEventCollection;
 use DateTimeImmutable;
 use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
 
-class CalendarEventCollectionTest extends TestCase
+class CalendarEventCollectionTest extends BaseTestCase
 {
     private CalendarEvent $calendarEvent;
     private CalendarEventCollection $calendarEventCollection;
 
     protected function setUp(): void
     {
+        parent::setUp();
+
         $this->calendarEvent = new CalendarEvent(
-            'test',
+            $this->faker->words(asText: true),
             DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2024-01-21 11:00:00'),
             DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2024-01-21 11:30:00')
         );

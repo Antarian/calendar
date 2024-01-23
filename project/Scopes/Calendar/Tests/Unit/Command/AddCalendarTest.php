@@ -2,11 +2,11 @@
 declare(strict_types=1);
 namespace Antarian\Scopes\Calendar\Tests\Unit\Command;
 
+use Antarian\Core\Tests\BaseTestCase;
 use Antarian\Scopes\Calendar\Command\AddCalendar;
-use Antarian\Scopes\Calendar\Tests\Unit\Model\CalendarIdTest;
-use PHPUnit\Framework\TestCase;
+use Symfony\Component\Uid\UuidV6;
 
-class AddCalendarTest extends TestCase
+class AddCalendarTest extends BaseTestCase
 {
     private AddCalendar $addCalendar;
     private string $title;
@@ -14,9 +14,11 @@ class AddCalendarTest extends TestCase
 
     protected function setUp(): void
     {
+        parent::setUp();
+
         $this->addCalendar = new AddCalendar(
-            $this->title = 'test',
-            $this->id = CalendarIdTest::DUMMY_UUID_V6,
+            $this->title = $this->faker->words(asText: true),
+            $this->id = $this->faker->optional()->passthrough(UuidV6::generate()),
         );
     }
 

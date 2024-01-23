@@ -4,7 +4,7 @@ namespace Tests\Unit\Service;
 
 use Antarian\Scopes\Calendar\Model\CalendarId;
 use Antarian\Scopes\Calendar\ValueObject\CalendarEvent;
-use App\Repository\CacheCalendarEventRepository;
+use App\Repository\CacheCalendarRepository;
 use App\Service\AvailabilityVerifier;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
@@ -17,11 +17,11 @@ class AvailabilityVerifierTest extends TestCase
      */
     public function testTimeSlotAvailability(array $events, DateTimeImmutable $startDateTime, DateTimeImmutable $endDateTime, bool $expected): void
     {
-        $eventRepository = $this->createMock(CacheCalendarEventRepository::class);
+        $eventRepository = $this->createMock(CacheCalendarRepository::class);
         $eventRepository->method('getEventsForDates')->willReturn($events);
 
         $availabilityVerifier = new AvailabilityVerifier($eventRepository);
-        $result = $availabilityVerifier->isSlotAvailable(new CalendarId((new UuidV6())->toRfc4122()), $startDateTime, $endDateTime);
+        $result = $availabilityVerifier->isSlotAvailable(new CalendarId(UuidV6::generate()), $startDateTime, $endDateTime);
 
         $this->assertSame($expected, $result);
     }

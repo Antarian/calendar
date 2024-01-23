@@ -8,7 +8,9 @@ use Antarian\Scopes\Calendar\ValueObject\CalendarEvent;
 use Antarian\Scopes\Calendar\ValueObject\CalendarEventCollection;
 use App\Repository\Converter\Converter;
 use DateTimeImmutable;
+use Faker\Factory;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Uid\UuidV6;
 
 class ConverterTest extends TestCase
 {
@@ -24,16 +26,20 @@ class ConverterTest extends TestCase
 
     public static function objectProvider(): array
     {
+        $faker = Factory::create();
+        $endDateTime = $faker->date(DATE_ATOM);
+        $startDateTime = $faker->date(DATE_ATOM, $endDateTime);
+
         return [
-            'slot_before_is_available' => [
+            'convert_object_to_array' => [
                 'object' => Calendar::create(
-                    id: new CalendarId($id = '1eeb911f-9e67-6f44-9be1-6d2d47d8129e'),
-                    title: $title = 'My Calendar',
+                    id: new CalendarId($id = UuidV6::generate()),
+                    title: $title = $faker->words(asText: true),
                     events: new CalendarEventCollection([
                         new CalendarEvent(
-                            title: $eventTitle = 'My Event',
-                            startDateTime: DateTimeImmutable::createFromFormat(DATE_ATOM, $startDateTime = '2024-01-22T10:30:00+00:00'),
-                            endDateTime: DateTimeImmutable::createFromFormat(DATE_ATOM, $endDateTime = '2024-01-22T11:30:00+00:00'),
+                            title: $eventTitle = $faker->words(asText: true),
+                            startDateTime: DateTimeImmutable::createFromFormat(DATE_ATOM, $startDateTime),
+                            endDateTime: DateTimeImmutable::createFromFormat(DATE_ATOM, $endDateTime),
                         ),
                     ])
                 ),

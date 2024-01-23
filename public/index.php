@@ -4,44 +4,45 @@ use Antarian\Scopes\Calendar\Command\AddEvent;
 use Antarian\Scopes\Calendar\CommandHandler\AddCalendarHandler;
 use Antarian\Scopes\Calendar\CommandHandler\AddEventHandler;
 use Antarian\Scopes\Calendar\Model\CalendarId;
-use App\Repository\CacheCalendarEventRepository;
-use App\Repository\CacheCalendarRepository;
-use App\Service\AvailabilityVerifier;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Antarian\Scopes\Calendar\Repository\CalendarRepository;
+use Antarian\Scopes\Calendar\Service\AvailabilityService;
+use App\Controller\EventsController;
+use App\DI\AppContainer;
 use Symfony\Component\Uid\UuidV6;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$cache = new FilesystemAdapter('calendar');
-$calendarRepository = new CacheCalendarRepository($cache);
-$eventRepository = new CacheCalendarEventRepository($cache);
-$availabilityService = new AvailabilityVerifier($eventRepository);
+$container = new AppContainer();
 
-$addCalendar = new AddCalendar(
-    title: 'My Calendar',
-    id: $calendarId = (new UuidV6())->toRfc4122(),
+$controller = new EventsController(
+    $container->get(CalendarRepository::class),
+    $container->get(AvailabilityService::class)
 );
-$addCalendarHandler = new AddCalendarHandler($calendarRepository);
-$addCalendarHandler($addCalendar);
 
-$addEvent = new AddEvent(
-    calendarId: $calendarId,
-    title: 'My Event',
-    startDateTime: "2024-01-22T09:30:00+00:00",
-    endDateTime: "2024-01-22T10:30:00+00:00",
+$controller->addCalendar('My Calendar', $calendarId = (new UuidV6())->toRfc4122());
+// first event
+$controller->addEvent(
+    'My Event',
+    $calendarId,
+    "2024-01-22T09:30:00+00:00",
+    "2024-01-22T10:30:00+00:00"
 );
-$addEventHandler = new AddEventHandler($calendarRepository, $availabilityService);
-$addEventHandler($addEvent);
-
-$addEvent = new AddEvent(
-    calendarId: $calendarId,
-    title: 'My Event',
-    startDateTime: "2024-01-22T09:30:00+00:00",
-    endDateTime: "2024-01-22T10:30:00+00:00",
+// conflicting second event
+$controller->addEvent(
+    'My Second Event',
+    $calendarId,
+    "2024-01-22T09:00:00+00:00",
+    "2024-01-22T10:00:00+00:00",
 );
-$addEventHandler = new AddEventHandler($calendarRepository, $availabilityService);
-$addEventHandler($addEvent);
+// third event
+$controller->addEvent(
+    'My Third Event',
+    $calendarId,
+    "2024-01-23T09:30:00+00:00",
+    "2024-01-23T10:30:00+00:00"
+);
+$events22nd = $controller->getEvents($calendarId, "2024-01-22T09:00:00+00:00", "2024-01-23T09:00:00+00:00");
+var_dump($events22nd);
 
-$calendar = $calendarRepository->get(new CalendarId($calendarId));
-
-var_dump($calendar);
+$events23rd = $controller->getEvents($calendarId, "2024-01-23T09:00:00+00:00", "2024-01-24T09:00:00+00:00");
+var_dump($events23rd);

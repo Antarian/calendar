@@ -4,12 +4,12 @@ namespace App\Service;
 
 use Antarian\Scopes\Calendar\Model\CalendarId;
 use Antarian\Scopes\Calendar\Service\AvailabilityService;
-use App\Repository\CacheCalendarEventRepository;
+use App\Repository\CacheCalendarRepository;
 use DateTimeImmutable;
 
 class AvailabilityVerifier implements AvailabilityService
 {
-    public function __construct(private CacheCalendarEventRepository $eventRepository)
+    public function __construct(private CacheCalendarRepository $eventRepository)
     {
     }
 
